@@ -9,23 +9,20 @@ use WP_Term;
 final class TermBuilder
 {
     private int $id;
-    private int $clonedFromId = 0;
     /** @var array{name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
     private array $args;
+    private int $clonedFromId = 0;
 
-    /** @param WP_Term|mixed[]|null $sourceTerm */
-    private function __construct(int $id, $sourceTerm)
+    private function __construct(int $id, array $args)
     {
         $this->id = $id;
 
-        if (is_array($sourceTerm)) {
-            $this->args = $sourceTerm;
-        } else {
-            $vars = get_object_vars($sourceTerm);
-            $this->clonedFromId = $vars['term_id'];
-            unset($vars['term_id']);
-            $this->args = $vars;
+        if (isset($sourceTerm['term_id'])) {
+            $this->clonedFromId = $args['term_id'];
+            unset($args['term_id']);
         }
+
+        $this->args = $args;
     }
 
     /**
@@ -51,7 +48,7 @@ final class TermBuilder
     /** @pure */
     public static function copy(WP_Term $term): TermBuilder
     {
-        return new TermBuilder(0, $term);
+        return new TermBuilder(0, get_object_vars($term));
     }
 
     /** The term description. Default empty string. */
