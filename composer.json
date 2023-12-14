@@ -1,10 +1,8 @@
 {
     "require": {
-        "php": ">=7.4",
-        "offbeatwp/framework": "2.*"
+        "php": ">=7.4.33"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
-        "php-stubs/wordpress-stubs": "^6.4"
+        "php-stubs/wordpress-stubs": "^6.4.1"
     }
 }

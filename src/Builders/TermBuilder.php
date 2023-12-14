@@ -2,7 +2,7 @@
 
 namespace Builders;
 
-use Exceptions\TermSaveException;
+use Exceptions\TermBuilderException;
 use WP_Error;
 use WP_Term;
 
@@ -93,33 +93,35 @@ final class TermBuilder
      * Inserts or updates the term in the database.<br>
      * Returns term ID on success, throws TermSaveException on failure.
      * @return positive-int
-     * @throws TermSaveException
+     * @throws TermBuilderException
      */
     public function save(): int
     {
+        $update = ($this->id && !$this->clonedFromId);
+
         // Either insert or update the term
-        if ($this->id && !$this->clonedFromId) {
+        if ($update) {
             $result = wp_update_term($this->id, $this->args['taxonomy'], $this->args);
         } else {
             $result = wp_insert_term($this->args['name'], $this->args['taxonomy'], $this->args);
         }
 
         if ($result instanceof WP_Error) {
-            throw new TermSaveException($result->get_error_message());
+            throw new TermBuilderException('Termbuilder ' . ($update ? 'UPDATE' : 'INSERT') . 'failed: ' . $result->get_error_message());
         }
 
         // If this is a clone, copy the post relations and term meta too
         if ($this->clonedFromId) {
             global $wpdb;
 
-            $wpdb->query(
-                $wpdb->prepare("INSERT INTO {$wpdb->term_relationships} (object_id, term_taxonomy_id, term_order) SELECT object_id, %d, term_order FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d;",
+            $wpdb->query($wpdb->prepare(
+                "INSERT INTO {$wpdb->term_relationships} (object_id, term_taxonomy_id, term_order) SELECT object_id, %d, term_order FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d;",
                 $this->id,
                 $this->clonedFromId
             ));
 
-            $wpdb->query(
-                $wpdb->prepare("INSERT INTO {$wpdb->termmeta} (term_id, meta_key, meta_value) SELECT %d, meta_key, meta_value FROM {$wpdb->termmeta} WHERE term_id = %d;",
+            $wpdb->query($wpdb->prepare(
+                "INSERT INTO {$wpdb->termmeta} (term_id, meta_key, meta_value) SELECT %d, meta_key, meta_value FROM {$wpdb->termmeta} WHERE term_id = %d;",
                 $this->id,
                 $this->clonedFromId
             ));
