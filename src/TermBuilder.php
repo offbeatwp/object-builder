@@ -103,7 +103,7 @@ final class TermBuilder
         }
 
         if ($result instanceof WP_Error) {
-            throw new TermBuilderException('Termbuilder ' . ($update ? 'UPDATE' : 'INSERT') . 'failed: ' . $result->get_error_message());
+            throw new TermBuilderException('Termbuilder ' . ($update ? 'UPDATE' : 'INSERT') . ' failed: ' . $result->get_error_message());
         }
 
         // If this is a clone, copy the post relations and term meta too
