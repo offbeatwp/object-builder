@@ -1,4 +1,8 @@
 {
+    "name": "offbeatwp/wp-object-builders",
+    "description": "Builders for WordPress objects such as posts or terms.",
+    "license": "MIT",
+    "type": "library",
     "require": {
         "php": ">=7.4.33"
     },
