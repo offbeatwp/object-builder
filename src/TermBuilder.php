@@ -1,10 +1,6 @@
 <?php
 
-namespace Builders;
-
-use Exceptions\TermBuilderException;
-use WP_Error;
-use WP_Term;
+use OffbeatWP\Builders\Exceptions\TermBuilderException;
 
 final class TermBuilder
 {

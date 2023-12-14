@@ -1,6 +1,6 @@
 <?php
 
-namespace Exceptions;
+namespace OffbeatWP\Builders\Exceptions;
 
 use Exception;
 
