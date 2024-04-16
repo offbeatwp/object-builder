@@ -7,7 +7,7 @@ final class TermBuilder
     /** @var array{name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
     private array $args;
 
-    private function __construct(int $id, array $args)
+    private function __construct(array $args)
     {
         $this->args = $args;
     }
@@ -90,16 +90,21 @@ final class TermBuilder
      */
     public static function create(string $termName, string $taxonomy): TermBuilder
     {
-        return new TermBuilder(0, ['name' => $termName, 'taxonomy' => $taxonomy]);
+        return new TermBuilder(['name' => $termName, 'taxonomy' => $taxonomy]);
     }
 
     /**
      * @pure
      * @param positive-int $termId The ID of the term.
      * @param string $taxonomy The taxonomy of the term.
+     * @throws TermBuilderException
      */
     public static function update(int $termId, string $taxonomy): TermBuilder
     {
-        return new TermBuilder($termId, ['taxonomy' => $taxonomy]);
+        if ($termId <= 0) {
+            throw new TermBuilderException('Termbuilder update failed, invalid ID: ' . $termId);
+        }
+
+        return new TermBuilder(['taxonomy' => $taxonomy]);
     }
 }
